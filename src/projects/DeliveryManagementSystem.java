@@ -1,10 +1,12 @@
 package projects;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class DeliveryManagementSystem {
     public static void main(String[] args) {
-        Order newOrder1 = new Order("Молоко", 250.0);
+        Order newOrder1 = new Order("Молоко", 250.123);
         Order newOrder2 = new Order("Сметана", 150.25);
         Courier newCourier = new Courier("Саша");
         newCourier.takeOrder(newOrder1);
@@ -20,10 +22,18 @@ interface Deliverable {
 class Order {
     private String itemName;
     private double itemPrice;
+    BigDecimal price = BigDecimal.valueOf(itemPrice);
 
-    public Order (String newItemName, double newItemPrice){
+    public Order (String newItemName, double newItemPrice) {
         this.itemName = newItemName;
-        this.itemPrice = newItemPrice;
+
+        BigDecimal bd = BigDecimal.valueOf(newItemPrice);
+        if (bd.scale() > 2) {
+            this.itemPrice = bd.setScale(0, RoundingMode.DOWN).doubleValue();
+            System.out.println("Cлишком много копеек. Цена товара = " + this.itemPrice);
+        } else {
+            this.itemPrice = newItemPrice;
+        }
     }
 
     public String getItemName() {
